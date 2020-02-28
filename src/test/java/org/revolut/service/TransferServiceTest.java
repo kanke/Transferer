@@ -1,7 +1,7 @@
 package org.revolut.service;
 
-import com.google.errorprone.annotations.DoNotMock;
 import org.mockito.Mock;
+import org.revolut.repository.TransferRepository;
 
 public class TransferServiceTest {
 

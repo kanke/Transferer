@@ -5,6 +5,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
+import org.revolut.resource.TransferResource;
 
 @Slf4j
 public class App extends Application<Configuration> {
@@ -12,6 +13,8 @@ public class App extends Application<Configuration> {
 
         //****** Dropwizard REST Endpoints ***********//
         log.info("Registering REST resources");
+        final TransferResource transferResource = new TransferResource();
+        environment.jersey().register(transferResource);
 
     }
 
