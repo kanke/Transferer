@@ -9,8 +9,11 @@
 # Mac file
 *~.DS_Store
 
-# BlueJ files
+# IDE files
 *.ctxt
+*.lst
+pom.properties
+uiDesigner.xml
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
