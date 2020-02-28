@@ -1,4 +1,4 @@
-package dropwizard;
+package org.revolut.dropwizard;
 
 
 import io.dropwizard.Application;
