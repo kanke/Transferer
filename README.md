@@ -51,7 +51,14 @@ Restendpoint
 === Adding lightweight DI like Guice?
 === CQRS
 === api versioning
-
+=== Check how you are throwing exception...or return in responsebody
+=== make accountdao, transactiondao, accountservice, transactionservice to interface and impl
+=== use atomic integer - threadsafe and not getting threads stepping on each toes (is it threadsafe or not?)
+=== is this threadsafe
+=== putifabsent /putifpresent
+=== double check locking on singleton
+=== interface lock in java -----read/write and lock
+=== synchronized countdown latch (Wait and notify)
 
 Not supporting
 - currency conversions and multi-currency operations

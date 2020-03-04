@@ -9,11 +9,8 @@ import java.math.BigDecimal;
 @Data @Builder
 public class Transaction {
     public enum Status {
-        PENDING,
-        CANCELLED,
         COMPLETED
     }
-
     private long debitAccountId;
     private long creditAccountId;
     private BigDecimal amount;

@@ -17,7 +17,6 @@ import javax.ws.rs.core.Response;
 public class AccountResource {
 
     private AccountService accountService;
-
     @Inject
     public AccountResource(AccountService accountService) {
         this.accountService = accountService;

@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-@Singleton
 public class TransactionDao {
 
     private static AtomicInteger ID_GENERATOR = new AtomicInteger(1);

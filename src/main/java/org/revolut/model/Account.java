@@ -7,12 +7,10 @@ import java.math.BigDecimal;
 
 @Data
 public class Account {
-
     public enum Status {
         ACTIVE,
         INACTIVE
     }
-
     private String currencyCode;
     private long accountId;
     private String accountName;
