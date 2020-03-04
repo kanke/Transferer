@@ -2,6 +2,7 @@ package org.revolut.service;
 
 import com.google.inject.Inject;
 import org.revolut.dao.AccountDao;
+import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
 
@@ -17,15 +18,19 @@ public class AccountService {
         this.accountDao = accountDao;
     }
 
-    public Account getAccount(long accountId) throws AccountException {
+    protected Account getAccount(long accountId) throws AccountException {
         return accountDao.findAccountById(accountId);
     }
 
-    public void withdrawFromAccount(long accountId, BigDecimal amount) throws AccountException {
+    protected void withdrawFromAccount(long accountId, BigDecimal amount) throws AccountException {
         accountDao.withdraw(accountId, amount);
     }
 
-    public void depositToAccount(long accountId, BigDecimal amount) throws AccountException {
+    protected void depositToAccount(long accountId, BigDecimal amount) throws AccountException {
         accountDao.deposit(accountId, amount);
+    }
+
+    public long createAccount(AccountDto accountDto) throws AccountException {
+        return accountDao.createAccount(accountDto).getAccountId();
     }
 }

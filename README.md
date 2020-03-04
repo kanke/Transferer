@@ -50,6 +50,7 @@ Restendpoint
 === check account transfer data model/ database structure
 === Adding lightweight DI like Guice?
 === CQRS
+=== api versioning
 
 
 Not supporting

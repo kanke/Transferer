@@ -25,33 +25,14 @@ public class TransactionService {
 
     public long transferFunds(AccountTransactionDto accountTransaction) throws TransactionException, AccountException {
 
-//        Account vvcv= new Account();
-//        vvcv.setBalance(BigDecimal.valueOf(50.00));
-//        vvcv.setCurrencyCode("GBP");
-//        vvcv.setAccountId(1);
-//
-//        Account raf= new Account();
-//        vvcv.setBalance(BigDecimal.valueOf(50.00));
-//        vvcv.setCurrencyCode("GBP");
-//        vvcv.setAccountId(3);
-//
-//        Account fromAccount = vvcv;
-//        Account toAccount = raf;
         Account fromAccount = accountService.getAccount(accountTransaction.getDebitAccountId());
         Account toAccount = accountService.getAccount(accountTransaction.getCreditAccountId());
 
-        String fromCurrencyCode = fromAccount.getCurrencyCode();
-        String toCurrencyCode = toAccount.getCurrencyCode();
+        if (fromAccount != null && toAccount != null) {
 
-        //check inactive bank account
-        if (fromAccount.getStatus() == Account.Status.INACTIVE || toAccount.getStatus() == Account.Status.INACTIVE)
-            throw new TransactionException(String.format(String.format("The sending account with id %s or receiving account with id %s is inactive", fromAccount.getAccountId(), toAccount.getAccountId())));
+            validateAccountStatus(fromAccount, toAccount);
+            validateAccountType(fromAccount.getCurrencyCode(), toAccount.getCurrencyCode());
 
-        //check account currency matches
-        if (fromCurrencyCode != toCurrencyCode) {
-            throw new TransactionException(String.format("Different currency transfer not supported, " +
-                    "Sending account is in %s and receiving account is in %s", fromCurrencyCode, toCurrencyCode));
-        } else {
             BigDecimal transactionAmount = accountTransaction.getAmount();
             accountService.withdrawFromAccount(fromAccount.getAccountId(), transactionAmount);
             accountService.depositToAccount(toAccount.getAccountId(), transactionAmount);
@@ -66,8 +47,23 @@ public class TransactionService {
                     .build();
 
             return transactionDao.addTransaction(transaction);
+
+        } else {
+            throw new AccountException(String.format("No account with id %s or %s found", fromAccount.getAccountId(), toAccount.getAccountId()));
         }
+    }
 
+    private void validateAccountStatus(Account fromAccount, Account toAccount) throws TransactionException {
+        //check inactive bank account
+        if (fromAccount.getStatus() == Account.Status.INACTIVE || toAccount.getStatus() == Account.Status.INACTIVE)
+            throw new TransactionException(String.format(String.format("The sending account with id %s or receiving account with id %s is inactive", fromAccount.getAccountId(), toAccount.getAccountId())));
+    }
 
+    private void validateAccountType(String fromCurrencyCode, String toCurrencyCode) throws TransactionException {
+        //check account currency matches
+        if (!fromCurrencyCode.equalsIgnoreCase(toCurrencyCode)) {
+            throw new TransactionException(String.format("Different currency transfer not supported, " +
+                    "Sending account is in %s and receiving account is in %s", fromCurrencyCode, toCurrencyCode));
+        }
     }
 }

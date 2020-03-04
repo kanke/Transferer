@@ -1,25 +1,18 @@
 package org.revolut.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.revolut.exception.TransactionException;
 import org.revolut.model.Transaction;
 
+import javax.inject.Singleton;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
+@Singleton
 public class TransactionDao {
 
-    private static AtomicInteger ID_GENERATOR = new AtomicInteger(1000);
+    private static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
     private ConcurrentHashMap<Integer, Transaction> transactionMap = new ConcurrentHashMap<>();
-
-    public Transaction getTransactionByAccountId(long accountId) throws TransactionException {
-        if (transactionMap.containsKey(accountId)) {
-            return transactionMap.get(accountId);
-        } else {
-            throw new TransactionException(String.format("No transaction found with account id %s found", accountId));
-        }
-    }
 
     public long addTransaction(Transaction transaction) {
         int transactionId = ID_GENERATOR.getAndIncrement();
