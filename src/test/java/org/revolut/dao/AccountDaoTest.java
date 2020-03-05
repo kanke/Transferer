@@ -42,6 +42,7 @@ public class AccountDaoTest {
         toAccount.setCurrencyCode("GBP");
         toAccount.setAccountId(2l);
         toAccount.setAccountNumber(202020);
+        toAccount.setAccountName("test");
         accountMap.put(toAccount.getAccountId(), toAccount);
     }
 
@@ -86,5 +87,27 @@ public class AccountDaoTest {
 
         Account account = accountDao.createAccount(accountDto);
         Assert.assertEquals(1, account.getAccountId());
+    }
+
+    @Test
+    @DisplayName("Should not create account")
+    public void shouldNotCreateAccount() throws AccountException {
+
+        exceptionRule.expect(AccountException.class);
+        exceptionRule.expectMessage("An account already exist for test in currency GBP");
+
+        when(accountMap.entrySet()).thenReturn(new ConcurrentHashMap<Long, Account>() {{
+            put(toAccount.getAccountId(), toAccount);
+        }}.entrySet());
+        when(accountMap.containsKey(toAccount.getAccountId())).thenReturn(true);
+
+        when(accountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+        AccountDto accountDto = AccountDto.builder()
+                .accountName("test")
+                .balance(BigDecimal.valueOf(50.00))
+                .currencyCode("GBP")
+                .build();
+
+        accountDao.createAccount(accountDto);
     }
 }

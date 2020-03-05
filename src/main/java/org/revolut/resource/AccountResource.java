@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import org.eclipse.jetty.http.HttpStatus;
 import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
-import org.revolut.exception.TransactionException;
 import org.revolut.service.AccountService;
 
 import javax.ws.rs.Consumes;

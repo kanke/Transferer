@@ -4,16 +4,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.revolut.model.Transaction;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 @Slf4j
 public class TransactionDao {
 
-    private static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
-    private ConcurrentHashMap<Integer, Transaction> transactionMap = new ConcurrentHashMap<>();
+    private LongAdder ID_GENERATOR = new LongAdder();
+    private ConcurrentHashMap<Long, Transaction> transactionMap = new ConcurrentHashMap<>();
 
     public long addTransaction(Transaction transaction) {
-        int transactionId = ID_GENERATOR.getAndIncrement();
+
+        ID_GENERATOR.increment();
+        long transactionId = ID_GENERATOR.longValue();
         transactionMap.put(transactionId, transaction);
         log.debug("transaction with id {} added", transactionId);
         return transactionId;

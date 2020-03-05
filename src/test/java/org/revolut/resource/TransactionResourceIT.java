@@ -76,7 +76,7 @@ public class TransactionResourceIT extends BaseResourceTest {
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, resp.getStatusCode());
     }
 
-    public long createBankAccount(String payload) {
+    public String createBankAccount(String payload) {
         Response response = given()
                 .contentType(APPLICATION_JSON)
                 .body(payload)
@@ -85,6 +85,6 @@ public class TransactionResourceIT extends BaseResourceTest {
                 .then()
                 .extract()
                 .response();
-        return Long.valueOf(response.getBody().asString());
+        return response.getBody().asString();
     }
 }

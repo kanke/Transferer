@@ -1,13 +1,10 @@
 package org.revolut.model;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
-import org.revolut.exception.AccountException;
 
 import java.math.BigDecimal;
-import java.util.concurrent.locks.ReadWriteLock;
 
 @Data
 @Slf4j

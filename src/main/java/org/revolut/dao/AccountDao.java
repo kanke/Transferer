@@ -7,14 +7,14 @@ import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
 
 import javax.inject.Singleton;
-import java.math.BigDecimal;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 @Slf4j
 @Singleton
 public class AccountDao {
-    private static AtomicInteger ID_GENERATOR = new AtomicInteger(1);
+    private LongAdder ID_GENERATOR = new LongAdder();
     private ConcurrentHashMap<Long, Account> accountMap = new ConcurrentHashMap<>();
 
     public Account findAccountById(long accountId) throws AccountException {
@@ -26,10 +26,11 @@ public class AccountDao {
     }
 
     public Account createAccount(AccountDto accountDto) throws AccountException {
-        validateAccountDetails(accountDto);
+       validateAccountDetails(accountDto);
 
+        ID_GENERATOR.increment();
         Account account = new Account();
-        account.setAccountId(ID_GENERATOR.getAndIncrement());
+        account.setAccountId(ID_GENERATOR.longValue());
         account.setCurrencyCode(accountDto.getCurrencyCode());
         account.setStatus(Account.Status.ACTIVE);
         account.setBalance(accountDto.getBalance());
@@ -42,8 +43,13 @@ public class AccountDao {
     }
 
     public void validateAccountDetails(AccountDto accountDto) throws AccountException {
-        if (accountMap.containsValue(accountDto))
-            throw new AccountException(String.format("An account already exist for %s in currency %s ",
-                    accountDto.getAccountName(), accountDto.getCurrencyCode()));
+        for (Map.Entry<Long, Account> entry : accountMap.entrySet()) {
+            Account value = entry.getValue();
+            if (value.getAccountName().equalsIgnoreCase(accountDto.getAccountName()) && value.getCurrencyCode().equalsIgnoreCase(accountDto.getCurrencyCode())) {
+                throw new AccountException(String.format("An account already exist for %s in currency %s ",
+                        accountDto.getAccountName(), accountDto.getCurrencyCode()));
+            }
+        }
+
     }
 }

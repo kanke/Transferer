@@ -22,6 +22,7 @@ public class App extends Application<Configuration> {
         log.info("Registering REST resources");
         environment.jersey().register(TransactionResource.class);
         environment.jersey().register(AccountResource.class);
+        environment.admin().addTask(new ShutdownTask());
     }
 
     @Override
