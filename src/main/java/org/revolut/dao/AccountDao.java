@@ -7,6 +7,7 @@ import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
 
 import javax.inject.Singleton;
+import java.math.BigDecimal;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 

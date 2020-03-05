@@ -2,7 +2,6 @@ package org.revolut.dao;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
 
@@ -73,5 +73,18 @@ public class AccountDaoTest {
         accountDao.findAccountById(toAccount.getAccountId());
 
         //should throw TransactionException
+    }
+
+    @Test
+    @DisplayName("Should create correct account")
+    public void shouldCreateAccount() throws AccountException {
+        AccountDto accountDto = AccountDto.builder()
+                .accountName("test")
+                .balance(BigDecimal.valueOf(20.00))
+                .currencyCode("GBP")
+                .build();
+
+        Account account = accountDao.createAccount(accountDto);
+        Assert.assertEquals(1, account.getAccountId());
     }
 }

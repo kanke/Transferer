@@ -1,106 +1,90 @@
 package org.revolut.resource;
 
-import io.restassured.http.ContentType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.jackson.Jackson;
 import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
+import org.eclipse.jetty.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.revolut.dto.AccountDto;
 import org.revolut.dto.AccountTransactionDto;
-import org.revolut.exception.AccountException;
-import org.revolut.model.Account;
-import org.revolut.service.AccountService;
-import org.revolut.service.TransactionService;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
+import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static io.restassured.RestAssured.given;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-
-@RunWith(MockitoJUnitRunner.class)
 public class TransactionResourceIT extends BaseResourceTest {
 
-    @Mock
-    private TransactionService transactionService;
+    private static final String APPLICATION_JSON = "application/json";
+    private static final String TRANSFER_ENDPOINT = "/transfer";
+    private static final String ACCOUNT_ENDPOINT = "/account";
+    private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+    private String fromAccountPayload;
+    private String toAccountPayload;
+    private String transactionPayload;
+    private String transactionPayloadFail;
 
-    @Mock
-    private AccountService accountService;
+    {
+        try {
+            fromAccountPayload = MAPPER.writeValueAsString(
+                    MAPPER.readValue(fixture("fixtures/toAccount.json"), AccountDto.class));
+            toAccountPayload = MAPPER.writeValueAsString(
+                    MAPPER.readValue(fixture("fixtures/fromAccount.json"), AccountDto.class));
+            transactionPayload = MAPPER.writeValueAsString(
+                    MAPPER.readValue(fixture("fixtures/transactionBody.json"), AccountTransactionDto.class));
+            transactionPayloadFail = MAPPER.writeValueAsString(
+                    MAPPER.readValue(fixture("fixtures/transactionBodyInsufficient.json"), AccountTransactionDto.class));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
 
-    @Test
-    public void shouldTransferFunds() throws AccountException {
-
-        Account toAccount = new Account();
-        toAccount.setBalance(BigDecimal.valueOf(50.00));
-        toAccount.setCurrencyCode("GBP");
-
-        //long toAccountId = createAccount(AccountDto.builder().accountName("test").balance(BigDecimal.valueOf(20.00)).currency("GBP").build());
-        //long fromAccountId = createAccount(AccountDto.builder().accountName("test").balance(BigDecimal.valueOf(50.00)).currency("GBP").build());
-
-
-        AccountTransactionDto accountTransactionDto = AccountTransactionDto.builder()
-                .creditAccountId(1l)
-                .debitAccountId(2l)
-                .reference("bribe")
-                .amount(BigDecimal.valueOf(20.00))
-                .build();
-
-        Response resp = given()
-        .header("Content-Type", "application/json")
-                .body(accountTransactionDto)
-                .post("/transfer").then()
-                .extract()
-                .response();
-//
-//        ValidatableResponse respe = with().body(accountTransactionDto)
-//                .when()
-//                .request("POST", "/transfer")
-//                .then()
-//                .assertThat().body("odd.ck", equalTo(12.2f))
-//                .statusCode(201);
-
-        final ResponseBody body = resp.getBody();
-        System.out.println("body " + body.asString());
-
-        //assertEquals("Transfer Successful", body.path("message"));
+    @Before
+    public void setUp() {
+        createBankAccount(fromAccountPayload);
+        createBankAccount(toAccountPayload);
     }
 
     @Test
-    public void createAccount(){
-
-        Map<String, Object> jsonAsMap = new HashMap<>();
-        jsonAsMap.put("accountName", "Test12");
-        jsonAsMap.put("balance", "20.00");
-        jsonAsMap.put("currency", "GBP");
-        //mjsonAsMapap.put("description", "testing purpose");
-
-        AccountDto accountDto1 = AccountDto.builder().accountName("test").balance(BigDecimal.valueOf(20.00)).currencyCode("GBP").build();
+    public void shouldTransferFunds() {
         Response resp = given()
-                //.header("Content-Type", "application/json")
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .body(jsonAsMap)
+                .contentType(APPLICATION_JSON)
+                .body(transactionPayload)
                 .post("/transfer")
                 .then()
-                .extract().response();
-                //.andReturn();
-        System.out.println("**********body********** " + resp.getBody().asString());
+                .extract()
+                .response();
 
-        ResponseBody responseBody =
-                given().
-                        accept(ContentType.JSON).
-                        contentType(ContentType.JSON).
-                                body(jsonAsMap).
-                                        when().
-                                        post("/transfer").
-                                        thenReturn().body();
-        System.out.println("**********responseBody********** " + responseBody.asString());
+        assertEquals("1", resp.body().asString());
+        assertEquals(HttpStatus.OK_200, resp.getStatusCode());
+    }
 
+    @Test
+    public void shouldNotTransferFundsDueToInsufficientBalance() {
 
+        Response resp = given()
+                .contentType(APPLICATION_JSON)
+                .body(transactionPayloadFail)
+                .post(TRANSFER_ENDPOINT)
+                .then()
+                .extract()
+                .response();
 
-        //return Long.parseLong(resp.body().asString());
+        assertTrue(resp.body().asString().contains("There was an error processing your request."));
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, resp.getStatusCode());
+    }
+
+    public long createBankAccount(String payload) {
+        Response response = given()
+                .contentType(APPLICATION_JSON)
+                .body(payload)
+                .when()
+                .post(ACCOUNT_ENDPOINT)
+                .then()
+                .extract()
+                .response();
+        return Long.valueOf(response.getBody().asString());
     }
 }

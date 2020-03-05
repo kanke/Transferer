@@ -7,8 +7,8 @@ import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
 
 public class AccountService {
-
     private final AccountDao accountDao;
+
     @Inject
     public AccountService(AccountDao accountDao) {
         this.accountDao = accountDao;
@@ -21,5 +21,4 @@ public class AccountService {
     public long createAccount(AccountDto accountDto) throws AccountException {
         return accountDao.createAccount(accountDto).getAccountId();
     }
-
 }

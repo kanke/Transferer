@@ -2,6 +2,7 @@ package org.revolut.resource;
 
 import io.restassured.RestAssured;
 import org.junit.BeforeClass;
+
 import static io.restassured.RestAssured.*;
 
 public class BaseResourceTest {
@@ -11,13 +12,12 @@ public class BaseResourceTest {
         String port = System.getProperty("server.port");
         if (port == null) {
             RestAssured.port = Integer.valueOf(8080);
-        }
-        else{
+        } else {
             RestAssured.port = Integer.valueOf(port);
         }
 
         String baseHost = System.getProperty("server.host");
-        if(baseHost==null){
+        if (baseHost == null) {
             baseHost = "http://localhost";
         }
         baseURI = baseHost;

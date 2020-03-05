@@ -7,6 +7,7 @@ import org.revolut.exception.AccountException;
 import org.revolut.exception.TransactionException;
 import org.revolut.service.TransactionService;
 
+import javax.validation.Valid;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -24,8 +25,7 @@ public class TransactionResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response transferFunds(AccountTransactionDto accountTransaction) throws AccountException, TransactionException {
-        System.out.println("accountTransaction " + accountTransaction);
+    public Response transferFunds(@Valid AccountTransactionDto accountTransaction) throws AccountException, TransactionException {
         long transactionId = transactionService.transferFunds(accountTransaction);
         return Response.status(HttpStatus.OK_200).entity(transactionId).build();
     }

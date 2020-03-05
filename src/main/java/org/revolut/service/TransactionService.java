@@ -112,7 +112,6 @@ public class TransactionService {
 
         //check sending account has enough funds
         if (fromAccount.getBalance().compareTo(amount) < 0) {
-            System.out.println("Yep, " + fromAccount.getBalance() + " is smaller than " + amount + "!");
             throw new AccountException(String.format("Insufficient balance in account with id %s", fromAccount.getAccountId()));
         }
     }

@@ -136,7 +136,6 @@ public class TransactionServiceTest {
                 .reference("bribe")
                 .amount(BigDecimal.valueOf(20.00))
                 .build();
-
         transactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountException
@@ -158,7 +157,6 @@ public class TransactionServiceTest {
                 .amount(BigDecimal.valueOf(20000.00))
                 .reference("bribe")
                 .build();
-
         transactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountException
@@ -178,7 +176,6 @@ public class TransactionServiceTest {
                 .reference("bribe")
                 .amount(BigDecimal.valueOf(20.00))
                 .build();
-
         transactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountException
