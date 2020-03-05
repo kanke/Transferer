@@ -24,7 +24,7 @@ public class AccountResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createAccount(AccountDto accountDto) throws AccountException, TransactionException {
+    public Response createAccount(AccountDto accountDto) throws AccountException {
         long accountId = accountService.createAccount(accountDto);
         return Response.status(HttpStatus.CREATED_201).entity(accountId).build();
     }

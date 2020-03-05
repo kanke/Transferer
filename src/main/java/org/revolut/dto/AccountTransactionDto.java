@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
@@ -17,6 +18,7 @@ public class AccountTransactionDto {
     private long creditAccountId;
 
     @JsonProperty(required = true)
+    @PositiveOrZero
     private BigDecimal amount;
 
     @JsonProperty(required = true)

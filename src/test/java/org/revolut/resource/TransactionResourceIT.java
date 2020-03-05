@@ -77,7 +77,7 @@ public class TransactionResourceIT extends BaseResourceTest {
         jsonAsMap.put("currency", "GBP");
         //mjsonAsMapap.put("description", "testing purpose");
 
-        AccountDto accountDto1 = AccountDto.builder().accountName("test").balance(BigDecimal.valueOf(20.00)).currency("GBP").build();
+        AccountDto accountDto1 = AccountDto.builder().accountName("test").balance(BigDecimal.valueOf(20.00)).currencyCode("GBP").build();
         Response resp = given()
                 //.header("Content-Type", "application/json")
                 .contentType(ContentType.JSON)

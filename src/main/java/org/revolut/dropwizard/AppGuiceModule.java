@@ -19,6 +19,4 @@ public class AppGuiceModule extends AbstractModule {
         bind(AccountDao.class);
         bind(TransactionDao.class);
     }
-
-
 }

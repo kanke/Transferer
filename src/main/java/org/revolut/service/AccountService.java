@@ -5,7 +5,6 @@ import org.revolut.dao.AccountDao;
 import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
-import java.math.BigDecimal;
 
 public class AccountService {
 
@@ -19,15 +18,8 @@ public class AccountService {
         return accountDao.findAccountById(accountId);
     }
 
-    public void withdrawFromAccount(long accountId, BigDecimal amount) throws AccountException {
-        accountDao.withdraw(accountId, amount);
-    }
-
-    public void depositToAccount(long accountId, BigDecimal amount) throws AccountException {
-        accountDao.deposit(accountId, amount);
-    }
-
     public long createAccount(AccountDto accountDto) throws AccountException {
         return accountDao.createAccount(accountDto).getAccountId();
     }
+
 }

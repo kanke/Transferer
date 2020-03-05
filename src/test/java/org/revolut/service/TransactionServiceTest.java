@@ -4,10 +4,8 @@ import org.junit.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.revolut.dao.AccountDao;
 import org.revolut.dao.TransactionDao;
 import org.revolut.dto.AccountTransactionDto;
 import org.revolut.exception.AccountException;
@@ -15,7 +13,6 @@ import org.revolut.exception.TransactionException;
 import org.revolut.model.Account;
 
 import java.math.BigDecimal;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -23,9 +20,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class TransactionServiceTest {
-
-    @InjectMocks
-    private TransactionService transactionService;
 
     @Mock
     private TransactionDao transactionDao;
@@ -38,9 +32,13 @@ public class TransactionServiceTest {
 
     private Account fromAccount;
     private Account toAccount;
+    private TransactionService transactionService;
 
     @Before
     public void setUp() throws Exception {
+
+        transactionService = new TransactionService(accountService, transactionDao);
+
         fromAccount = new Account();
         fromAccount.setBalance(BigDecimal.valueOf(100.00));
         fromAccount.setCurrencyCode("GBP");
@@ -74,7 +72,9 @@ public class TransactionServiceTest {
         verify(accountService, atLeastOnce()).getAccount(fromAccount.getAccountId());
         verify(transactionDao, times(1)).addTransaction(any());
         Assert.assertEquals(0, transactionId);
-        //Assert.assertEquals(BigDecimal.valueOf(70.0), accountService.getAccount(toAccount.getAccountId()).getBalance());
+        Assert.assertEquals(BigDecimal.valueOf(150.0), toAccount.getBalance().add(fromAccount.getBalance()));
+        Assert.assertEquals(BigDecimal.valueOf(70.0), accountService.getAccount(toAccount.getAccountId()).getBalance());
+        Assert.assertEquals(BigDecimal.valueOf(80.0), accountService.getAccount(fromAccount.getAccountId()).getBalance());
     }
 
     @Test
@@ -120,14 +120,15 @@ public class TransactionServiceTest {
         transactionService.transferFunds(accountTransactionDto);
 
         //should throw TransactionException
-        verifyNoInteractions(transactionDao.addTransaction(any()));
+        verify(transactionDao, times(0)).addTransaction(any());
     }
 
     @Test
     @DisplayName("Should not transfer funds with missing account")
     public void shouldNotTransferFundsWithMissingAccount() throws AccountException, TransactionException {
 
-        exceptionRule.expect(Exception.class);
+        exceptionRule.expect(AccountException.class);
+        exceptionRule.expectMessage("No account with id 1 or 2 found");
 
         AccountTransactionDto accountTransactionDto = AccountTransactionDto.builder()
                 .creditAccountId(toAccount.getAccountId())
@@ -138,6 +139,7 @@ public class TransactionServiceTest {
 
         transactionService.transferFunds(accountTransactionDto);
 
+        //should throw AccountException
         verify(transactionDao, times(0)).addTransaction(any());
     }
 
@@ -147,20 +149,40 @@ public class TransactionServiceTest {
 
         when(accountService.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
 
-//        exceptionRule.expect(AccountException.class);
-//        exceptionRule.expectMessage("Insufficient balance in account with id %s");
+        exceptionRule.expect(AccountException.class);
+        exceptionRule.expectMessage("Insufficient balance in account with id 1");
 
         AccountTransactionDto accountTransactionDto = AccountTransactionDto.builder()
-                .creditAccountId(toAccount.getAccountId())
                 .debitAccountId(fromAccount.getAccountId())
-                .reference("bribe")
+                .creditAccountId(toAccount.getAccountId())
                 .amount(BigDecimal.valueOf(20000.00))
+                .reference("bribe")
                 .build();
 
         transactionService.transferFunds(accountTransactionDto);
 
-        //should throw TransactionException
-        //verify(transactionDao, times(0)).addTransaction(any());
+        //should throw AccountException
+        verify(transactionDao, times(0)).addTransaction(any());
+    }
+
+    @Test
+    @DisplayName("Should not transfer funds with same from and to account")
+    public void shouldNotTransferFundsWithItself() throws AccountException, TransactionException {
+
+        exceptionRule.expect(AccountException.class);
+        exceptionRule.expectMessage("The sending account 2 cannot be same as receiving account 2");
+
+        AccountTransactionDto accountTransactionDto = AccountTransactionDto.builder()
+                .creditAccountId(toAccount.getAccountId())
+                .debitAccountId(toAccount.getAccountId())
+                .reference("bribe")
+                .amount(BigDecimal.valueOf(20.00))
+                .build();
+
+        transactionService.transferFunds(accountTransactionDto);
+
+        //should throw AccountException
+        verify(transactionDao, times(0)).addTransaction(any());
     }
 
 }

@@ -37,7 +37,6 @@ public class AccountDaoTest {
 
     @Before
     public void setUp() {
-
         toAccount = new Account();
         toAccount.setBalance(BigDecimal.valueOf(50.00));
         toAccount.setCurrencyCode("GBP");
