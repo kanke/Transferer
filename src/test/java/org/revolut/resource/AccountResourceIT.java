@@ -2,25 +2,41 @@ package org.revolut.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
-import io.restassured.response.Response;
+import io.dropwizard.testing.junit.DropwizardAppRule;
+
+import javax.ws.rs.core.Response;
+
 import org.eclipse.jetty.http.HttpStatus;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.revolut.dropwizard.App;
 import org.revolut.dto.AccountDto;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static io.restassured.RestAssured.given;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class AccountResourceIT extends BaseResourceTest {
+public class AccountResourceIT {
 
-    private static final String APPLICATION_JSON = "application/json";
     private static final String ACCOUNT_ENDPOINT = "/account";
     private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
     private String testAccountPayload;
     private String testTwoAccountPayload;
     private String testThreeAccountPayload;
+    Client client;
+
+    @ClassRule
+    public static final DropwizardAppRule<Configuration> RULE =
+            new DropwizardAppRule<>(App.class);
 
     {
         try {
@@ -35,41 +51,34 @@ public class AccountResourceIT extends BaseResourceTest {
         }
     }
 
+    @Before
+    public void setUp() {
+        client = new JerseyClientBuilder().build();
+    }
+
     @Test
     public void shouldCreateBankAccount() {
-        Response response = given()
-                .contentType(APPLICATION_JSON)
-                .body(testAccountPayload)
-                .when()
-                .post(ACCOUNT_ENDPOINT)
-                .then()
-                .extract()
-                .response();
+        Response resp = getClient(ACCOUNT_ENDPOINT)
+                .post(Entity.entity(testAccountPayload, MediaType.APPLICATION_JSON));
 
-        assertEquals(HttpStatus.CREATED_201, response.getStatusCode());
+        assertEquals("1", resp.readEntity(String.class));
+        assertEquals(HttpStatus.CREATED_201, resp.getStatus());
     }
 
     @Test
     public void shouldNotCreateBankAccountDueToDuplicate() {
-        given()
-                .contentType(APPLICATION_JSON)
-                .body(testTwoAccountPayload)
-                .when()
-                .post(ACCOUNT_ENDPOINT)
-                .then()
-                .statusCode(201);
+        getClient(ACCOUNT_ENDPOINT)
+                .post(Entity.entity(testTwoAccountPayload, MediaType.APPLICATION_JSON));
 
-        Response response = given()
-                .contentType(APPLICATION_JSON)
-                .body(testThreeAccountPayload)
-                .when()
-                .post(ACCOUNT_ENDPOINT)
-                .then()
-                .extract()
-                .response();
+        Response resp = getClient(ACCOUNT_ENDPOINT)
+                .post(Entity.entity(testThreeAccountPayload, MediaType.APPLICATION_JSON));
 
+        assertTrue(resp.readEntity(String.class).contains("There was an error processing your request."));
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, resp.getStatus());
+    }
 
-        assertTrue(response.body().asString().contains("There was an error processing your request."));
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, response.getStatusCode());
+    private Invocation.Builder getClient(String path) {
+        return client.target(
+                String.format("http://localhost:%d" + path, RULE.getLocalPort())).request(MediaType.APPLICATION_JSON);
     }
 }

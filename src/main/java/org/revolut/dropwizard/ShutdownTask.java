@@ -20,6 +20,6 @@ public class ShutdownTask extends Task {
             public void run() {
                 System.exit(0);
             }
-        }, 5000);
+        }, 3000);
     }
 }
