@@ -73,11 +73,12 @@ Create new bank account
 Due to time constraints, I was unable to implement a lot but in future I will love to support the below;
 1. Currency conversions and multi-currency operations
 2. Add Api documentation like Swagger
-3. Version API - Format versions should go in headers—Accept-Version and Content-Version—in the request and response
-4. Access policies - Restrictions from certain networks, rate limits, guidance of caching of API call content
+3. Expand the api to include other requests like getting account, getting all transactions for account etcetera
+4. Version API - Format versions should go in headers—Accept-Version and Content-Version—in the request and response
+5. Access policies - Restrictions from certain networks, rate limits, guidance of caching of API call content
    etcetera
-5. Add Dropwizard config file to add different config such as different port for server and running integration tests
-6. Add terms & conditions and legal obligations
+6. Add Dropwizard config file to add different config such as different port for server and running integration tests
+7. Add terms & conditions and legal obligations
 
 
 

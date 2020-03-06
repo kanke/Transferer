@@ -12,7 +12,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.revolut.dropwizard.App;
 import org.revolut.dto.AccountDto;

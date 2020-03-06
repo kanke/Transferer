@@ -1,6 +1,5 @@
 package org.revolut.dao;
 
-
 import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
 import org.revolut.model.Account;

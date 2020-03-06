@@ -1,6 +1,5 @@
 package org.revolut.dropwizard;
 
-
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
