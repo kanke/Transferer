@@ -7,7 +7,7 @@ import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
 import org.revolut.service.AccountService;
 
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
     private final InMemoryAccountDao inMemoryAccountDao;
 
     @Inject
@@ -20,6 +20,7 @@ public class AccountServiceImpl implements AccountService{
     }
 
     public long createAccount(AccountDto accountDto) throws AccountException {
-        return inMemoryAccountDao.createAccount(accountDto).getAccountId();
+        final Account account = inMemoryAccountDao.createAccount(accountDto);
+        return account.getAccountId();
     }
 }

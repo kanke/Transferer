@@ -14,6 +14,8 @@ import org.revolut.service.impl.AccountServiceImpl;
 import org.revolut.service.impl.AccountTransactionServiceImpl;
 
 import java.math.BigDecimal;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -65,9 +67,9 @@ public class AccountTransactionServiceImplTest {
         accountTransactionServiceImpl.transferFunds(accountTransactionDto);
 
         verify(accountServiceImpl, atLeastOnce()).getAccount(fromAccount.getAccountId());
-        Assert.assertEquals(BigDecimal.valueOf(150.0), toAccount.getBalance().add(fromAccount.getBalance()));
-        Assert.assertEquals(BigDecimal.valueOf(70.0), accountServiceImpl.getAccount(toAccount.getAccountId()).getBalance());
-        Assert.assertEquals(BigDecimal.valueOf(80.0), accountServiceImpl.getAccount(fromAccount.getAccountId()).getBalance());
+        assertEquals(BigDecimal.valueOf(150.0), toAccount.getBalance().add(fromAccount.getBalance()));
+        assertEquals(BigDecimal.valueOf(70.0), accountServiceImpl.getAccount(toAccount.getAccountId()).getBalance());
+        assertEquals(BigDecimal.valueOf(80.0), accountServiceImpl.getAccount(fromAccount.getAccountId()).getBalance());
     }
 
     @Test
