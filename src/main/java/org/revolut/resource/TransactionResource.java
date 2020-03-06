@@ -6,7 +6,6 @@ import org.revolut.exception.AccountException;
 import org.revolut.exception.TransactionException;
 import org.revolut.service.TransactionService;
 
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -26,7 +25,7 @@ public class TransactionResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response transferFunds(@Valid AccountTransactionDto accountTransaction){
+    public Response transferFunds(AccountTransactionDto accountTransaction){
         try {
             transactionService.transferFunds(accountTransaction);
         } catch (TransactionException transactionException) {
