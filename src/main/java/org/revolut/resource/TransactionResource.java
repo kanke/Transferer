@@ -1,11 +1,11 @@
 package org.revolut.resource;
 
 import com.google.inject.Inject;
-import org.eclipse.jetty.http.HttpStatus;
 import org.revolut.dto.AccountTransactionDto;
 import org.revolut.exception.AccountException;
 import org.revolut.exception.TransactionException;
-import org.revolut.service.TransactionService;
+import org.revolut.response.StandardResponse;
+import org.revolut.service.impl.TransactionServiceImpl;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -18,17 +18,17 @@ import javax.ws.rs.core.Response;
 @Path("/transfer")
 @Consumes(MediaType.APPLICATION_JSON)
 public class TransactionResource {
-    private TransactionService transactionService;
+    private TransactionServiceImpl transactionServiceImpl;
 
     @Inject
-    public TransactionResource(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    public TransactionResource(TransactionServiceImpl transactionServiceImpl) {
+        this.transactionServiceImpl = transactionServiceImpl;
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response transferFunds(@Valid AccountTransactionDto accountTransaction) throws AccountException, TransactionException {
-        long transactionId = transactionService.transferFunds(accountTransaction);
-        return Response.status(HttpStatus.OK_200).entity(transactionId).build();
+        transactionServiceImpl.transferFunds(accountTransaction);
+        return Response.ok(new StandardResponse(StandardResponse.SUCCESS, "Transaction created successfully")).build();
     }
 }

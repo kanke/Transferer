@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 @Slf4j
 @Singleton
-public class AccountDao {
+public class AccountDao implements GenericDao {
     private LongAdder ID_GENERATOR = new LongAdder();
     private ConcurrentHashMap<Long, Account> accountMap = new ConcurrentHashMap<>();
 
@@ -42,7 +42,7 @@ public class AccountDao {
         return account;
     }
 
-    public void validateAccountDetails(AccountDto accountDto) throws AccountException {
+    private void validateAccountDetails(AccountDto accountDto) throws AccountException {
         for (Map.Entry<Long, Account> entry : accountMap.entrySet()) {
             Account value = entry.getValue();
             if (value.getAccountName().equalsIgnoreCase(accountDto.getAccountName()) && value.getCurrencyCode().equalsIgnoreCase(accountDto.getCurrencyCode())) {

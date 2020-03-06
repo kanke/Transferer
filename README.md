@@ -78,30 +78,5 @@ Due to time constraints, I was unable to implement a lot but in future I will lo
    etcetera
 5. Add terms & conditions and legal obligations
 
-##  Sample usages ##
-
-###  Using MAC OS Terminal ###
-
-> cd `/Users/kanke/Documents/Transferer`
-
-> `java -jar target/Transferer-1.0-SNAPSHOT.jar server`
-
-![Imgur](https://imgur.com/lwzeRu8.png)
-
-
-![Imgur](https://imgur.com/sJql3PR.png)
-
-
-![Imgur](https://imgur.com/FF8AC6N.png)
-
-
-![Imgur](https://imgur.com/keq3oQf.png)
-
-
-![Imgur](https://imgur.com/reioWMS.png)
-
-
-![Imgur](https://imgur.com/GNiQrZ9.png)
-
 
 

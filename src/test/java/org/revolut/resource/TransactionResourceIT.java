@@ -81,7 +81,7 @@ public class TransactionResourceIT {
         Response resp = getClient(TRANSFER_ENDPOINT)
                 .post(Entity.entity(transactionPayloadFail, MediaType.APPLICATION_JSON));
 
-        assertTrue(resp.readEntity(String.class).contains("There was an error processing your request."));
+        assertTrue(resp.readEntity(String.class).contains("Insufficient balance in account with id 1"));
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, resp.getStatus());
     }
 

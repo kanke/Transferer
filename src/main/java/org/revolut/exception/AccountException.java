@@ -1,6 +1,8 @@
 package org.revolut.exception;
 
-public class AccountException extends Exception {
+import javax.ws.rs.WebApplicationException;
+
+public class AccountException extends WebApplicationException {
     public AccountException(String message) {
         super(message);
     }

@@ -1,10 +1,10 @@
 package org.revolut.resource;
 
 import com.google.inject.Inject;
-import org.eclipse.jetty.http.HttpStatus;
 import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
-import org.revolut.service.AccountService;
+import org.revolut.response.StandardResponse;
+import org.revolut.service.impl.AccountServiceImpl;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -16,11 +16,11 @@ import javax.ws.rs.core.Response;
 @Path("/account")
 @Consumes(MediaType.APPLICATION_JSON)
 public class AccountResource {
-    private AccountService accountService;
+    private AccountServiceImpl accountServiceImpl;
 
     @Inject
-    public AccountResource(AccountService accountService) {
-        this.accountService = accountService;
+    public AccountResource(AccountServiceImpl accountServiceImpl) {
+        this.accountServiceImpl = accountServiceImpl;
     }
 
     @POST

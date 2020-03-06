@@ -61,8 +61,8 @@ public class AccountResourceIT {
         Response resp = getClient(ACCOUNT_ENDPOINT)
                 .post(Entity.entity(testAccountPayload, MediaType.APPLICATION_JSON));
 
-        assertEquals("1", resp.readEntity(String.class));
-        assertEquals(HttpStatus.CREATED_201, resp.getStatus());
+        assertTrue(resp.readEntity(String.class).contains("Account with id 1 created successfully"));
+        assertEquals(HttpStatus.OK_200, resp.getStatus());
     }
 
     @Test
