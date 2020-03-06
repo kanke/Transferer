@@ -91,7 +91,7 @@ public class AccountTransactionServiceImplTest {
 
         accountTransactionServiceImpl.transferFunds(accountTransactionDto);
 
-        //should throw TransactionException
+        //should throw AccountTransactionException
     }
 
     @Test
@@ -113,7 +113,7 @@ public class AccountTransactionServiceImplTest {
 
         accountTransactionServiceImpl.transferFunds(accountTransactionDto);
 
-        //should throw TransactionException
+        //should throw AccountTransactionException
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.revolut.dropwizard;
 
 import com.google.inject.AbstractModule;
 
+import com.google.inject.Singleton;
 import org.revolut.dao.impl.InMemoryAccountDao;
 import org.revolut.dao.AccountDao;
 import org.revolut.resource.AccountResource;
@@ -19,6 +20,6 @@ public class AppGuiceModule extends AbstractModule {
         bind(AccountTransactionServiceImpl.class);
         bind(AccountService.class).to(AccountServiceImpl.class);
         bind(AccountTransactionService.class).to(AccountTransactionServiceImpl.class);
-        bind(AccountDao.class).to(InMemoryAccountDao.class);
+        bind(AccountDao.class).to(InMemoryAccountDao.class).in(Singleton.class);
     }
 }

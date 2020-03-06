@@ -1,5 +1,6 @@
 package org.revolut.dao.impl;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.revolut.dao.AccountDao;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.LongAdder;
 @Slf4j
 @Singleton
 public class InMemoryAccountDao implements AccountDao {
+
     private LongAdder ID_GENERATOR = new LongAdder();
     private ConcurrentHashMap<Long, Account> accountMap = new ConcurrentHashMap<>();
 
