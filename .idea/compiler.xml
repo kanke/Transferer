@@ -9,6 +9,10 @@
         <module name="Transferer" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="8" />
+    <bytecodeTargetLevel>
+      <module name="Transferer" target="1.8" />
+      <module name="Transferer (1)" target="1.8" />
+      <module name="Transferer (2)" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

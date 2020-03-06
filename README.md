@@ -76,7 +76,7 @@ Due to time constraints, I was unable to implement a lot but in future I will lo
 3. Version API - Format versions should go in headers—Accept-Version and Content-Version—in the request and response
 4. Access policies - Restrictions from certain networks, rate limits, guidance of caching of API call content
    etcetera
-5. Add Dropwizard config file to add different config such as different port for server and running integration test
+5. Add Dropwizard config file to add different config such as different port for server and running integration tests
 6. Add terms & conditions and legal obligations
 
 
