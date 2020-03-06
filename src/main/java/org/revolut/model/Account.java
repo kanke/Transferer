@@ -13,7 +13,6 @@ public class Account {
         ACTIVE,
         INACTIVE
     }
-
     private String currencyCode;
     private long accountId;
     private String accountName;

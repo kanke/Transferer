@@ -62,7 +62,7 @@ public class AccountResourceIT {
                 .post(Entity.entity(testAccountPayload, MediaType.APPLICATION_JSON));
 
         assertTrue(resp.readEntity(String.class).contains("Account with id 1 created successfully"));
-        assertEquals(HttpStatus.OK_200, resp.getStatus());
+        assertEquals(HttpStatus.CREATED_201, resp.getStatus());
     }
 
     @Test
@@ -73,8 +73,8 @@ public class AccountResourceIT {
         Response resp = getClient(ACCOUNT_ENDPOINT)
                 .post(Entity.entity(testThreeAccountPayload, MediaType.APPLICATION_JSON));
 
-        assertTrue(resp.readEntity(String.class).contains("There was an error processing your request."));
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, resp.getStatus());
+        assertTrue(resp.readEntity(String.class).contains("An account already exist for test4 in currency AUD"));
+        assertEquals(HttpStatus.BAD_REQUEST_400, resp.getStatus());
     }
 
     private Invocation.Builder getClient(String path) {

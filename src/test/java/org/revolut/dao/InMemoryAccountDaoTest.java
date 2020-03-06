@@ -22,10 +22,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class AccountDaoTest {
+public class InMemoryAccountDaoTest {
 
     @InjectMocks
-    private AccountDao accountDao;
+    private InMemoryAccountDao inMemoryAccountDao;
 
     @Mock
     private ConcurrentHashMap<Long, Account> accountMap;
@@ -54,9 +54,9 @@ public class AccountDaoTest {
         }}.entrySet());
         when(accountMap.containsKey(toAccount.getAccountId())).thenReturn(true);
 
-        when(accountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+        when(inMemoryAccountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
 
-        Account account = accountDao.findAccountById(toAccount.getAccountId());
+        Account account = inMemoryAccountDao.findAccountById(toAccount.getAccountId());
 
         verify(accountMap, atLeastOnce()).containsKey(toAccount.getAccountId());
         Assert.assertEquals(2, account.getAccountId());
@@ -69,9 +69,9 @@ public class AccountDaoTest {
         exceptionRule.expect(AccountException.class);
         exceptionRule.expectMessage("No account with id 2 found");
 
-        when(accountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+        when(inMemoryAccountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
 
-        accountDao.findAccountById(toAccount.getAccountId());
+        inMemoryAccountDao.findAccountById(toAccount.getAccountId());
 
         //should throw TransactionException
     }
@@ -85,7 +85,7 @@ public class AccountDaoTest {
                 .currencyCode("GBP")
                 .build();
 
-        Account account = accountDao.createAccount(accountDto);
+        Account account = inMemoryAccountDao.createAccount(accountDto);
         Assert.assertEquals(1, account.getAccountId());
     }
 
@@ -101,13 +101,13 @@ public class AccountDaoTest {
         }}.entrySet());
         when(accountMap.containsKey(toAccount.getAccountId())).thenReturn(true);
 
-        when(accountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
+        when(inMemoryAccountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
         AccountDto accountDto = AccountDto.builder()
                 .accountName("test")
                 .balance(BigDecimal.valueOf(50.00))
                 .currencyCode("GBP")
                 .build();
 
-        accountDao.createAccount(accountDto);
+        inMemoryAccountDao.createAccount(accountDto);
     }
 }

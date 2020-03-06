@@ -71,8 +71,8 @@ public class TransactionResourceIT {
         Response resp = getClient(TRANSFER_ENDPOINT)
                 .post(Entity.entity(transactionPayload, MediaType.APPLICATION_JSON));
 
-        assertEquals("1", resp.readEntity(String.class));
-        assertEquals(HttpStatus.OK_200, resp.getStatus());
+        assertTrue(resp.readEntity(String.class).contains("Transaction created successfully"));
+        assertEquals(HttpStatus.CREATED_201, resp.getStatus());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class TransactionResourceIT {
                 .post(Entity.entity(transactionPayloadFail, MediaType.APPLICATION_JSON));
 
         assertTrue(resp.readEntity(String.class).contains("Insufficient balance in account with id 1"));
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR_500, resp.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST_400, resp.getStatus());
     }
 
     public String createBankAccount(String payload) {

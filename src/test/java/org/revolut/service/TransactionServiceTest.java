@@ -10,30 +10,28 @@ import org.revolut.dto.AccountTransactionDto;
 import org.revolut.exception.AccountException;
 import org.revolut.exception.TransactionException;
 import org.revolut.model.Account;
-import org.revolut.service.impl.AccountServiceImpl;
-import org.revolut.service.impl.TransactionServiceImpl;
 
 import java.math.BigDecimal;
 
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class TransactionServiceImplTest {
+public class TransactionServiceTest {
 
     @Mock
-    private AccountServiceImpl accountServiceImpl;
+    private AccountService accountService;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
     private Account fromAccount;
     private Account toAccount;
-    private TransactionServiceImpl transactionServiceImpl;
+    private TransactionService transactionServiceImpl;
 
     @Before
-    public void setUp() {
+    public void setUp() throws AccountException {
 
-        transactionServiceImpl = new TransactionServiceImpl(accountServiceImpl);
+        transactionServiceImpl = new TransactionService(accountService);
 
         fromAccount = new Account();
         fromAccount.setBalance(BigDecimal.valueOf(100.00));
@@ -47,14 +45,14 @@ public class TransactionServiceImplTest {
         toAccount.setAccountNumber(202020);
         toAccount.setAccountId(2l);
 
-        when(accountServiceImpl.getAccount(toAccount.getAccountId())).thenReturn(toAccount);
+        when(accountService.getAccount(toAccount.getAccountId())).thenReturn(toAccount);
     }
 
     @Test
     @DisplayName("Should transfer funds from one account to another")
     public void shouldTransferFundsWithoutErrors() throws AccountException, TransactionException {
 
-        when(accountServiceImpl.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
+        when(accountService.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
 
         AccountTransactionDto accountTransactionDto = AccountTransactionDto.builder()
                 .creditAccountId(toAccount.getAccountId())
@@ -63,21 +61,19 @@ public class TransactionServiceImplTest {
                 .amount(BigDecimal.valueOf(20.00))
                 .build();
 
-        long transactionId = transactionService.transferFunds(accountTransactionDto);
+        transactionServiceImpl.transferFunds(accountTransactionDto);
 
         verify(accountService, atLeastOnce()).getAccount(fromAccount.getAccountId());
-        verify(transactionDao, times(1)).addTransaction(any());
-        Assert.assertEquals(0, transactionId);
         Assert.assertEquals(BigDecimal.valueOf(150.0), toAccount.getBalance().add(fromAccount.getBalance()));
-        Assert.assertEquals(BigDecimal.valueOf(70.0), accountServiceImpl.getAccount(toAccount.getAccountId()).getBalance());
-        Assert.assertEquals(BigDecimal.valueOf(80.0), accountServiceImpl.getAccount(fromAccount.getAccountId()).getBalance());
+        Assert.assertEquals(BigDecimal.valueOf(70.0), accountService.getAccount(toAccount.getAccountId()).getBalance());
+        Assert.assertEquals(BigDecimal.valueOf(80.0), accountService.getAccount(fromAccount.getAccountId()).getBalance());
     }
 
     @Test
     @DisplayName("Should throw an exception when receiving account is inactive")
     public void shouldNotTransferFundsWithInActiveStatus() throws AccountException, TransactionException {
 
-        when(accountServiceImpl.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
+        when(accountService.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
 
         exceptionRule.expect(TransactionException.class);
         exceptionRule.expectMessage("The sending account with id 1 or receiving account with id 2 is inactive");
@@ -99,7 +95,7 @@ public class TransactionServiceImplTest {
     @DisplayName("Should throw an exception with currency accounts")
     public void shouldNotTransferFundsWithDifferentCurrencies() throws AccountException, TransactionException {
 
-        when(accountServiceImpl.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
+        when(accountService.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
 
         exceptionRule.expect(TransactionException.class);
         exceptionRule.expectMessage("Different currency transfer not supported, Sending account is in GBP and receiving account is in NGN");
@@ -139,7 +135,7 @@ public class TransactionServiceImplTest {
     @DisplayName("Should not transfer funds with insufficient balance from sending account")
     public void shouldNotTransferFundsWithInsufficientBalance() throws AccountException, TransactionException {
 
-        when(accountServiceImpl.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
+        when(accountService.getAccount(fromAccount.getAccountId())).thenReturn(fromAccount);
 
         exceptionRule.expect(AccountException.class);
         exceptionRule.expectMessage("Insufficient balance in account with id 1");
