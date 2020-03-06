@@ -1,53 +1,54 @@
-package org.revolut.service;
+package org.revolut.service.impl;
 
 import com.google.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
 import org.revolut.dto.AccountTransactionDto;
 import org.revolut.exception.AccountException;
-import org.revolut.exception.TransactionException;
+import org.revolut.exception.AccountTransactionException;
 import org.revolut.model.Account;
+import org.revolut.service.AccountTransactionService;
 
 import java.math.BigDecimal;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
-public class TransactionService {
+public class AccountTransactionServiceImpl implements AccountTransactionService {
 
-    private final AccountService accountService;
-    private Lock firstLock = new ReentrantLock();
-    private Lock secondLock = new ReentrantLock();
+    private final AccountServiceImpl accountServiceImpl;
+    private Lock withdrawAccountLock = new ReentrantLock();
+    private Lock depositAccountLock = new ReentrantLock();
 
     @Inject
-    public TransactionService(AccountService accountService) {
-        this.accountService = accountService;
+    public AccountTransactionServiceImpl(AccountServiceImpl accountServiceImpl) {
+        this.accountServiceImpl = accountServiceImpl;
     }
 
-    public void transferFunds(AccountTransactionDto accountTransaction) throws TransactionException, AccountException {
-        Account fromAccount = accountService.getAccount(accountTransaction.getDebitAccountId());
-        Account toAccount = accountService.getAccount(accountTransaction.getCreditAccountId());
+    public void transferFunds(AccountTransactionDto accountTransaction) throws AccountTransactionException, AccountException {
+        Account fromAccount = accountServiceImpl.getAccount(accountTransaction.getDebitAccountId());
+        Account toAccount = accountServiceImpl.getAccount(accountTransaction.getCreditAccountId());
         BigDecimal transactionAmount = accountTransaction.getAmount();
 
         validateAccountTransaction(accountTransaction);
 
         try {
-            acquireLocks(firstLock, secondLock);
+            acquireLocks(withdrawAccountLock, depositAccountLock);
 
             fromAccount.withdraw(transactionAmount);
             toAccount.deposit(transactionAmount);
 
         } catch (InterruptedException e) {
-            throw new TransactionException(String.format("Something happened whilst making transfer. Transfer not completed"));
+            throw new AccountTransactionException(String.format("Something happened whilst making transfer. Transfer not completed"));
         } finally {
-            firstLock.unlock();
-            secondLock.unlock();
+            withdrawAccountLock.unlock();
+            depositAccountLock.unlock();
         }
 
         log.info("transaction with id {} completed");
     }
 
-    //Getting locks in the same order and not holding locks at the same time
+    //Getting locks in the same order and not holding locks at the same time to avoid deadlock
     private void acquireLocks(Lock firstLock, Lock secondLock) throws InterruptedException {
         while (true) {
             // Acquire locks
@@ -66,9 +67,9 @@ public class TransactionService {
         }
     }
 
-    private void validateAccountTransaction(AccountTransactionDto accountTransaction) throws TransactionException, AccountException {
-        Account fromAccount = accountService.getAccount(accountTransaction.getDebitAccountId());
-        Account toAccount = accountService.getAccount(accountTransaction.getCreditAccountId());
+    private void validateAccountTransaction(AccountTransactionDto accountTransaction) throws AccountTransactionException, AccountException {
+        Account fromAccount = accountServiceImpl.getAccount(accountTransaction.getDebitAccountId());
+        Account toAccount = accountServiceImpl.getAccount(accountTransaction.getCreditAccountId());
         BigDecimal amount = accountTransaction.getAmount();
 
         //check transfer accounts exist
@@ -83,12 +84,12 @@ public class TransactionService {
 
         //check inactive bank account
         if (fromAccount.getStatus() == Account.Status.INACTIVE || toAccount.getStatus() == Account.Status.INACTIVE) {
-            throw new TransactionException(String.format(String.format("The sending account with id %s or receiving account with id %s is inactive", fromAccount.getAccountId(), toAccount.getAccountId())));
+            throw new AccountTransactionException(String.format(String.format("The sending account with id %s or receiving account with id %s is inactive", fromAccount.getAccountId(), toAccount.getAccountId())));
         }
 
         //check account currency matches
         if (!fromAccount.getCurrencyCode().equalsIgnoreCase(toAccount.getCurrencyCode())) {
-            throw new TransactionException(String.format("Different currency transfer not supported, " +
+            throw new AccountTransactionException(String.format("Different currency transfer not supported, " +
                     "Sending account is in %s and receiving account is in %s", fromAccount.getCurrencyCode(), toAccount.getCurrencyCode()));
         }
 

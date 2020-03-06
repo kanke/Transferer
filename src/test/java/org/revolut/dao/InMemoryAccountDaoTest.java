@@ -2,6 +2,7 @@ package org.revolut.dao;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.revolut.dao.impl.InMemoryAccountDao;
 import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
 import org.revolut.model.Account;

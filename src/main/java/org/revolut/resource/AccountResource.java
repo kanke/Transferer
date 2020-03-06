@@ -3,7 +3,7 @@ package org.revolut.resource;
 import com.google.inject.Inject;
 import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
-import org.revolut.service.AccountService;
+import org.revolut.service.impl.AccountServiceImpl;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -16,11 +16,11 @@ import javax.ws.rs.core.Response;
 @Path("/account")
 @Consumes(MediaType.APPLICATION_JSON)
 public class AccountResource {
-    private AccountService accountService;
+    private AccountServiceImpl accountServiceImpl;
 
     @Inject
-    public AccountResource(AccountService accountService) {
-        this.accountService = accountService;
+    public AccountResource(AccountServiceImpl accountServiceImpl) {
+        this.accountServiceImpl = accountServiceImpl;
     }
 
     @POST
@@ -28,7 +28,7 @@ public class AccountResource {
     public Response createAccount(@Valid AccountDto accountDto) {
         long accountId;
         try {
-            accountId = accountService.createAccount(accountDto);
+            accountId = accountServiceImpl.createAccount(accountDto);
         } catch (AccountException exception) {
             return Response.status(Response.Status.BAD_REQUEST).entity(exception.getMessage())
                     .build();

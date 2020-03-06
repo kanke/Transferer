@@ -12,6 +12,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.revolut.dropwizard.App;
 import org.revolut.dto.AccountDto;
@@ -61,7 +62,7 @@ public class AccountResourceIT {
         Response resp = getClient(ACCOUNT_ENDPOINT)
                 .post(Entity.entity(testAccountPayload, MediaType.APPLICATION_JSON));
 
-        assertTrue(resp.readEntity(String.class).contains("Account with id 1 created successfully"));
+        assertEquals("Account with id 1 created successfully", resp.readEntity(String.class));
         assertEquals(HttpStatus.CREATED_201, resp.getStatus());
     }
 

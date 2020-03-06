@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 
 @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class AccountTransactionDto {
-    @NotEmpty
+    @NotNull
     private long debitAccountId;
 
-    @NotEmpty
+    @NotNull
     private long creditAccountId;
 
     @NotNull

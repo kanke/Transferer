@@ -12,6 +12,7 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.revolut.dropwizard.App;
 import org.revolut.dto.AccountDto;
@@ -60,7 +61,6 @@ public class TransactionResourceIT {
     @Before
     public void setUp() {
         client = new JerseyClientBuilder().build();
-
         createBankAccount(fromAccountPayload);
         createBankAccount(toAccountPayload);
     }
@@ -71,7 +71,7 @@ public class TransactionResourceIT {
         Response resp = getClient(TRANSFER_ENDPOINT)
                 .post(Entity.entity(transactionPayload, MediaType.APPLICATION_JSON));
 
-        assertTrue(resp.readEntity(String.class).contains("Transaction created successfully"));
+        assertEquals("Transaction created successfully", resp.readEntity(String.class));
         assertEquals(HttpStatus.CREATED_201, resp.getStatus());
     }
 
@@ -81,15 +81,13 @@ public class TransactionResourceIT {
         Response resp = getClient(TRANSFER_ENDPOINT)
                 .post(Entity.entity(transactionPayloadFail, MediaType.APPLICATION_JSON));
 
-        assertTrue(resp.readEntity(String.class).contains("Insufficient balance in account with id 1"));
+        assertEquals("Insufficient balance in account with id 1", resp.readEntity(String.class));
         assertEquals(HttpStatus.BAD_REQUEST_400, resp.getStatus());
     }
 
-    public String createBankAccount(String payload) {
-        Response resp = getClient(ACCOUNT_ENDPOINT)
+    public void createBankAccount(String payload) {
+        getClient(ACCOUNT_ENDPOINT)
                 .post(Entity.entity(payload, MediaType.APPLICATION_JSON));
-
-        return resp.readEntity(String.class);
     }
 
     private Invocation.Builder getClient(String path) {

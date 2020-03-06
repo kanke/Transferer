@@ -40,7 +40,7 @@ Implicit requirements:
 > 🧹 -  Run `mvn verify` <- Runs unit and integration tests
 
 ##  Tools ##
-- Used concurrent HashMap but this can be switched to an in memory database in future eg Redis
+- Used concurrentHashMap as a  threadsafe data store but this can be switched to an in memory database in future eg Redis, h2 by providing a different implementation
 - Dropwizard as a lightweight package to build application
 - Lombok as a library that automatically plugs into your editor and build tool for less boiler plate
 - Guice for dependency injection and dropwizard guicey for auto configuration
@@ -65,7 +65,7 @@ Create new bank account
 {
 "accountName":"test",
 "balance":"50",
-"currency":"GBP"
+"currencyCode":"GBP"
 }
 ```
 
@@ -76,7 +76,9 @@ Due to time constraints, I was unable to implement a lot but in future I will lo
 3. Version API - Format versions should go in headers—Accept-Version and Content-Version—in the request and response
 4. Access policies - Restrictions from certain networks, rate limits, guidance of caching of API call content
    etcetera
-5. Add terms & conditions and legal obligations
+5. Add Dropwizard config file to add different config such as different port for server and running integration test
+6. Add terms & conditions and legal obligations
+
 
 
 

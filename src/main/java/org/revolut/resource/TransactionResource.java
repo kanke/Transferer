@@ -3,9 +3,10 @@ package org.revolut.resource;
 import com.google.inject.Inject;
 import org.revolut.dto.AccountTransactionDto;
 import org.revolut.exception.AccountException;
-import org.revolut.exception.TransactionException;
-import org.revolut.service.TransactionService;
+import org.revolut.exception.AccountTransactionException;
+import org.revolut.service.impl.AccountTransactionServiceImpl;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,20 +17,20 @@ import javax.ws.rs.core.Response;
 @Path("/transfer")
 @Consumes(MediaType.APPLICATION_JSON)
 public class TransactionResource {
-    private TransactionService transactionService;
+    private AccountTransactionServiceImpl accountTransactionServiceImpl;
 
     @Inject
-    public TransactionResource(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    public TransactionResource(AccountTransactionServiceImpl accountTransactionServiceImpl) {
+        this.accountTransactionServiceImpl = accountTransactionServiceImpl;
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response transferFunds(AccountTransactionDto accountTransaction){
+    public Response transferFunds(@Valid AccountTransactionDto accountTransaction){
         try {
-            transactionService.transferFunds(accountTransaction);
-        } catch (TransactionException transactionException) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(transactionException.getMessage())
+            accountTransactionServiceImpl.transferFunds(accountTransaction);
+        } catch (AccountTransactionException accountTransactionException) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(accountTransactionException.getMessage())
                     .build();
         } catch (AccountException accountException) {
             return Response.status(Response.Status.BAD_REQUEST).entity(accountException.getMessage())

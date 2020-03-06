@@ -1,7 +1,8 @@
-package org.revolut.dao;
+package org.revolut.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
+import org.revolut.dao.AccountDao;
 import org.revolut.dto.AccountDto;
 import org.revolut.exception.AccountException;
 import org.revolut.model.Account;
@@ -37,7 +38,7 @@ public class InMemoryAccountDao implements AccountDao {
         account.setAccountName(accountDto.getAccountName());
         account.setOpenDate(LocalDate.now());
 
-        accountMap.put(account.getAccountId(), account);
+        accountMap.putIfAbsent(account.getAccountId(), account);
         log.debug("account with id {} created", account.getAccountId());
         return account;
     }
