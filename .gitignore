@@ -13,7 +13,7 @@
 *.ctxt
 *.lst
 *.xml
-.idea/
+/.idea/
 *.iml
 
 # Package Files #
@@ -29,3 +29,4 @@
 /target
 /src/main/webapp/WEB-INF/classes
 */META-INF/*
+
