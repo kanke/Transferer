@@ -1,6 +1,5 @@
 package org.revolut.dao.impl;
 
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.LocalDate;
 import org.revolut.dao.AccountDao;
@@ -13,6 +12,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
+
+/**
+ * This class represents the in memory data store implementation of Accounts entity or table
+ * using a concurrent hash map.
+ */
 @Slf4j
 @Singleton
 public class InMemoryAccountDao implements AccountDao {

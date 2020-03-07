@@ -13,6 +13,10 @@ import java.math.BigDecimal;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+
+/**
+ * This class is responsible processing and validating account transactions
+ */
 @Slf4j
 public class AccountTransactionServiceImpl implements AccountTransactionService {
 
@@ -48,7 +52,13 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
         log.info("transaction with id {} completed");
     }
 
-    //Getting locks in the same order and not holding locks at the same time to avoid deadlock
+
+    /**
+     * Getting locks in the same order and not holding locks at the same time to avoid deadlock
+     * Many threads can acquire a lock, but only one can have it at a time. If a thread tryLock while it's being used by another, it has to wait until the other thread unlock.
+     * Technically one lock is enough for the transactions between two accounts, but if we had 1000 accounts, the number of locks would be huge as we need one lock for each pair of accounts.
+     * By using a lock for an account, we would need only 1000 locks in that case.
+     */
     private void acquireLocks(Lock firstLock, Lock secondLock) throws InterruptedException {
         while (true) {
             // Acquire locks

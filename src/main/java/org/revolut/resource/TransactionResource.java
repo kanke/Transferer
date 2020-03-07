@@ -36,7 +36,6 @@ public class TransactionResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(accountException.getMessage())
                     .build();
         }
-
         return Response.status(Response.Status.CREATED).entity("Transaction created successfully")
                 .build();
     }
