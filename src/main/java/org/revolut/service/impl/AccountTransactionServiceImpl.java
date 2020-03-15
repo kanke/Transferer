@@ -7,6 +7,7 @@ import org.revolut.dto.AccountTransactionDto;
 import org.revolut.exception.AccountException;
 import org.revolut.exception.AccountTransactionException;
 import org.revolut.model.Account;
+import org.revolut.service.AccountService;
 import org.revolut.service.AccountTransactionService;
 
 import java.math.BigDecimal;
@@ -20,18 +21,18 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class AccountTransactionServiceImpl implements AccountTransactionService {
 
-    private final AccountServiceImpl accountServiceImpl;
+    private final AccountService accountService;
     private Lock withdrawAccountLock = new ReentrantLock();
     private Lock depositAccountLock = new ReentrantLock();
 
     @Inject
-    public AccountTransactionServiceImpl(AccountServiceImpl accountServiceImpl) {
-        this.accountServiceImpl = accountServiceImpl;
+    public AccountTransactionServiceImpl(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     public void transferFunds(AccountTransactionDto accountTransaction) throws AccountTransactionException, AccountException {
-        Account fromAccount = accountServiceImpl.getAccount(accountTransaction.getDebitAccountId());
-        Account toAccount = accountServiceImpl.getAccount(accountTransaction.getCreditAccountId());
+        Account fromAccount = accountService.getAccount(accountTransaction.getDebitAccountId());
+        Account toAccount = accountService.getAccount(accountTransaction.getCreditAccountId());
         BigDecimal transactionAmount = accountTransaction.getAmount();
 
         validateAccountTransaction(accountTransaction);
@@ -78,8 +79,8 @@ public class AccountTransactionServiceImpl implements AccountTransactionService 
     }
 
     private void validateAccountTransaction(AccountTransactionDto accountTransaction) throws AccountTransactionException, AccountException {
-        Account fromAccount = accountServiceImpl.getAccount(accountTransaction.getDebitAccountId());
-        Account toAccount = accountServiceImpl.getAccount(accountTransaction.getCreditAccountId());
+        Account fromAccount = accountService.getAccount(accountTransaction.getDebitAccountId());
+        Account toAccount = accountService.getAccount(accountTransaction.getCreditAccountId());
         BigDecimal amount = accountTransaction.getAmount();
 
         //check transfer accounts exist

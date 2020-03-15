@@ -5,6 +5,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
+import org.revolut.dropwizard.guice.AppGuiceModule;
 import org.revolut.exception.AccountTransactionException;
 import org.revolut.resource.AccountResource;
 import org.revolut.resource.TransactionResource;
@@ -13,10 +14,10 @@ import ru.vyarus.dropwizard.guice.GuiceBundle;
 import javax.security.auth.login.AccountException;
 
 @Slf4j
-public class App extends Application<Configuration> {
+public class TransfererApplication extends Application<Configuration> {
 
     public static void main(String[] args) throws Exception {
-        new App().run(args);
+        new TransfererApplication().run(args);
     }
 
     @Override

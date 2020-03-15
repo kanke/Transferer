@@ -96,7 +96,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.revolut.dropwizard.App</mainClass>
+                                    <mainClass>org.revolut.dropwizard.TransfererApplication</mainClass>
                                 </transformer>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer">

@@ -70,8 +70,6 @@ public class InMemoryAccountDaoTest {
         exceptionRule.expect(AccountException.class);
         exceptionRule.expectMessage("No account with id 2 found");
 
-        when(inMemoryAccountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
-
         inMemoryAccountDao.findAccountById(toAccount.getAccountId());
 
         //should throw TransactionException
@@ -102,7 +100,6 @@ public class InMemoryAccountDaoTest {
         }}.entrySet());
         when(accountMap.containsKey(toAccount.getAccountId())).thenReturn(true);
 
-        when(inMemoryAccountDao.findAccountById(toAccount.getAccountId())).thenReturn(toAccount);
         AccountDto accountDto = AccountDto.builder()
                 .accountName("test")
                 .balance(BigDecimal.valueOf(50.00))

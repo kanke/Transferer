@@ -1,4 +1,4 @@
-package org.revolut.dropwizard;
+package org.revolut.dropwizard.guice;
 
 import com.google.inject.AbstractModule;
 

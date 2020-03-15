@@ -29,12 +29,12 @@ public class AccountTransactionServiceImplTest {
 
     private Account fromAccount;
     private Account toAccount;
-    private AccountTransactionServiceImpl accountTransactionServiceImpl;
+    private AccountTransactionService accountTransactionService;
 
     @Before
     public void setUp() throws AccountException {
 
-        accountTransactionServiceImpl = new AccountTransactionServiceImpl(accountServiceImpl);
+        accountTransactionService = new AccountTransactionServiceImpl(accountServiceImpl);
 
         fromAccount = new Account();
         fromAccount.setBalance(BigDecimal.valueOf(100.00));
@@ -64,7 +64,7 @@ public class AccountTransactionServiceImplTest {
                 .amount(BigDecimal.valueOf(20.00))
                 .build();
 
-        accountTransactionServiceImpl.transferFunds(accountTransactionDto);
+        accountTransactionService.transferFunds(accountTransactionDto);
 
         verify(accountServiceImpl, atLeastOnce()).getAccount(fromAccount.getAccountId());
         assertEquals(BigDecimal.valueOf(150.0), toAccount.getBalance().add(fromAccount.getBalance()));
@@ -89,7 +89,7 @@ public class AccountTransactionServiceImplTest {
                 .build();
         toAccount.setStatus(Account.Status.INACTIVE);
 
-        accountTransactionServiceImpl.transferFunds(accountTransactionDto);
+        accountTransactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountTransactionException
     }
@@ -111,7 +111,7 @@ public class AccountTransactionServiceImplTest {
                 .build();
         toAccount.setCurrencyCode("NGN");
 
-        accountTransactionServiceImpl.transferFunds(accountTransactionDto);
+        accountTransactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountTransactionException
     }
@@ -129,7 +129,7 @@ public class AccountTransactionServiceImplTest {
                 .reference("bribe")
                 .amount(BigDecimal.valueOf(20.00))
                 .build();
-        accountTransactionServiceImpl.transferFunds(accountTransactionDto);
+        accountTransactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountException
     }
@@ -149,7 +149,7 @@ public class AccountTransactionServiceImplTest {
                 .amount(BigDecimal.valueOf(20000.00))
                 .reference("bribe")
                 .build();
-        accountTransactionServiceImpl.transferFunds(accountTransactionDto);
+        accountTransactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountException
     }
@@ -167,7 +167,7 @@ public class AccountTransactionServiceImplTest {
                 .reference("bribe")
                 .amount(BigDecimal.valueOf(20.00))
                 .build();
-        accountTransactionServiceImpl.transferFunds(accountTransactionDto);
+        accountTransactionService.transferFunds(accountTransactionDto);
 
         //should throw AccountException
     }

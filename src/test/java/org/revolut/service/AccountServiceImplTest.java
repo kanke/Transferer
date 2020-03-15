@@ -34,7 +34,7 @@ public class AccountServiceImplTest {
     @Mock
     private Account mockAccount;
 
-    private AccountServiceImpl accountServiceImpl;
+    private AccountService accountService;
     private Account expectedAccount;
 
     @Rule
@@ -42,7 +42,7 @@ public class AccountServiceImplTest {
 
     @Before
     public void setUp() {
-        accountServiceImpl = new AccountServiceImpl(inMemoryAccountDao);
+        accountService = new AccountServiceImpl(inMemoryAccountDao);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class AccountServiceImplTest {
 
         when(inMemoryAccountDao.findAccountById(ACCOUNT_ID)).thenReturn(expectedAccount);
 
-        Account actualAccount = accountServiceImpl.getAccount(ACCOUNT_ID);
+        Account actualAccount = accountService.getAccount(ACCOUNT_ID);
 
         verify(inMemoryAccountDao, atLeastOnce()).findAccountById(ACCOUNT_ID);
         assertEquals(expectedAccount.getAccountId(), actualAccount.getAccountId());
@@ -67,7 +67,7 @@ public class AccountServiceImplTest {
     @DisplayName("Should get correct account by id")
     public void shouldNotFindAccountById() throws AccountException {
 
-        Account actualAccount = accountServiceImpl.getAccount(ACCOUNT_ID2);
+        Account actualAccount = accountService.getAccount(ACCOUNT_ID2);
 
         verify(inMemoryAccountDao, atLeastOnce()).findAccountById(ACCOUNT_ID2);
         assertNull(actualAccount);
@@ -87,7 +87,7 @@ public class AccountServiceImplTest {
         when(inMemoryAccountDao.createAccount(accountDto)).thenReturn(mockAccount);
         when(mockAccount.getAccountId()).thenReturn(ACCOUNT_ID);
 
-        long actualAccountId = accountServiceImpl.createAccount(accountDto);
+        long actualAccountId = accountService.createAccount(accountDto);
 
         verify(inMemoryAccountDao, atLeastOnce()).createAccount(accountDto);
         assertEquals(1l, actualAccountId);
@@ -108,7 +108,7 @@ public class AccountServiceImplTest {
 
         when(inMemoryAccountDao.createAccount(accountDto)).thenThrow(new AccountException("An account already exist for test2 in currency EUR"));
 
-        accountServiceImpl.createAccount(accountDto);
+        accountService.createAccount(accountDto);
 
         //should throw AccountException
         verify(inMemoryAccountDao, atLeast(0)).createAccount(accountDto);

@@ -13,7 +13,7 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.revolut.dropwizard.App;
+import org.revolut.dropwizard.TransfererApplication;
 import org.revolut.dto.AccountDto;
 import org.revolut.dto.AccountTransactionDto;
 
@@ -39,7 +39,7 @@ public class TransactionResourceIT {
 
     @ClassRule
     public static final DropwizardAppRule<Configuration> RULE =
-            new DropwizardAppRule<>(App.class);
+            new DropwizardAppRule<>(TransfererApplication.class);
 
     {
         try {
